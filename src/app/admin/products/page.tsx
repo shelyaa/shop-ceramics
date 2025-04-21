@@ -42,7 +42,7 @@ async function ProductsTable() {
     select: {
       id: true,
       name: true,
-      price: true,
+      priceInCents: true,
       isAvailableForPurchase: true,
       _count: { select: { orders: true } },
     },
@@ -83,7 +83,7 @@ async function ProductsTable() {
               )}
             </TableCell>
             <TableCell>{product.name}</TableCell>
-            <TableCell>{formatCurrency(product.price / 100)}</TableCell>
+            <TableCell>{formatCurrency(product.priceInCents / 100)}</TableCell>
             <TableCell>{formatNumber(product._count.orders)}</TableCell>
             <TableCell>
               <DropdownMenu>

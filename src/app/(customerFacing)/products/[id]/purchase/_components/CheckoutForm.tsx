@@ -27,7 +27,7 @@ type CheckoutFormProps = {
     id: string;
     imagePath: string;
     name: string;
-    price: number;
+    priceInCents: number;
     description: string;
   };
   clientSecret: string;
@@ -50,7 +50,7 @@ export function CheckoutForm({ product, clientSecret }: CheckoutFormProps) {
           />
         </div>
         <div>
-          <div className="text-lg">{formatCurrency(product.price / 100)}</div>
+          <div className="text-lg">{formatCurrency(product.priceInCents / 100)}</div>
           <h1 className="text-2xl font-bold">{product.name}</h1>
           <div className="line-clamp-3 text-muted-foreground">
             {product.description}
@@ -58,13 +58,13 @@ export function CheckoutForm({ product, clientSecret }: CheckoutFormProps) {
         </div>
       </div>
       <Elements options={{ clientSecret, locale: "en" }} stripe={stripePromise}>
-        <Form price={product.price} productId={product.id} />
+        <Form priceInCents={product.priceInCents} productId={product.id} />
       </Elements>
     </div>
   );
 }
 
-function Form({ price, productId }: { price: number, productId: string }) {
+function Form({ priceInCents, productId }: { priceInCents: number, productId: string }) {
   const stripe = useStripe();
   const elements = useElements();
   const [isLoading, setIsLoading] = useState(false);
@@ -113,7 +113,7 @@ function Form({ price, productId }: { price: number, productId: string }) {
             </CardDescription>
           )}
         </CardHeader>
-        <PaymentElement />
+        <div className="ml-4"><PaymentElement /></div>
         <div className="ml-4 mt-4">
           <LinkAuthenticationElement onChange={e => setEmail(e.value.email)}/>
         </div>
@@ -126,7 +126,7 @@ function Form({ price, productId }: { price: number, productId: string }) {
           >
             {isLoading
               ? "Purchasing..."
-              : `Purchase - ${formatCurrency(price / 100)}`}
+              : `Purchase - ${formatCurrency(priceInCents / 100)}`}
           </Button>
         </CardFooter>
       </Card>

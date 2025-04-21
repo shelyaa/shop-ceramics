@@ -21,7 +21,7 @@ import { PageHeader } from "../_components/PageHeader"
     return db.order.findMany({
       select: {
         id: true,
-        price: true,
+        pricePaidInCents: true,
         product: { select: { name: true } },
         user: { select: { email: true } },
       },
@@ -61,7 +61,7 @@ import { PageHeader } from "../_components/PageHeader"
               <TableCell>{order.product.name}</TableCell>
               <TableCell>{order.user.email}</TableCell>
               <TableCell>
-                {formatCurrency(order.price / 100)}
+                {formatCurrency(order.pricePaidInCents / 100)}
               </TableCell>
               <TableCell className="text-center">
                 <DropdownMenu>

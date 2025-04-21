@@ -11,10 +11,11 @@ import {
 } from "@/src/components/ui/card";
 import { Input } from "@/src/components/ui/input";
 import { Label } from "@/src/components/ui/label";
-import { useFormState, useFormStatus } from "react-dom";
+import { useActionState } from "react";
+import { useFormStatus } from "react-dom";
 
 export default function MyOrdersPage() {
-  const [data, action] = useFormState(emailOrderHistory, {});
+  const [data, action] = useActionState(emailOrderHistory, {});
 
   return (
     <form action={action} className="max-2-xl mx-auto">

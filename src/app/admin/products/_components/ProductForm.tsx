@@ -17,7 +17,7 @@ export function ProductForm({ product }: { product?: Product | null }) {
     product == null ? addProduct : updateProduct.bind(null, product.id),
     {}
   );
-  const [price, setPrice] = useState<number | undefined>(product?.price);
+  const [priceInCents, setPriceInCents] = useState<number | undefined>(product?.priceInCents);
 
   return (
     <form action={action} className="space-y-8">
@@ -36,16 +36,16 @@ export function ProductForm({ product }: { product?: Product | null }) {
         <Label htmlFor="price">Price</Label>
         <Input
           type="number"
-          id="price"
-          name="price"
+          id="priceInCents"
+          name="priceInCents"
           required
-          value={price}
-          onChange={(e) => setPrice(Number(e.target.value) || undefined)}
+          value={priceInCents}
+          onChange={(e) => setPriceInCents(Number(e.target.value) || undefined)}
         />
         <div className="text-muted-foreground">
-          {formatCurrency((price || 0) / 100)}
+          {formatCurrency((priceInCents || 0) / 100)}
         </div>
-        {error.price && <div className="text-destructive">{error.price}</div>}
+        {error.priceInCents && <div className="text-destructive">{error.priceInCents}</div>}
       </div>
       <div className="space-y-2">
         <Label htmlFor="description">Description</Label>

@@ -14,7 +14,7 @@ import Image from "next/image";
 type ProductCardProps = {
   id: string;
   name: string;
-  price: number;
+  priceInCents: number;
   description: string;
   imagePath: string;
 };
@@ -22,7 +22,7 @@ type ProductCardProps = {
 export function ProductCard({
   id,
   name,
-  price,
+  priceInCents,
   description,
   imagePath,
 }: ProductCardProps) {
@@ -33,7 +33,7 @@ export function ProductCard({
       </div>
       <CardHeader>
         <CardTitle>{name}</CardTitle>
-        <CardDescription>{formatCurrency(price / 100)}</CardDescription>
+        <CardDescription>{formatCurrency(priceInCents / 100)}</CardDescription>
       </CardHeader>
       <CardContent className="flex-grow">{description}</CardContent>
       <CardFooter>

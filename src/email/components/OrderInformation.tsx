@@ -9,7 +9,7 @@ import {
 } from "@react-email/components";
 
 type OrderInformationProps = {
-  order: { id: string; createdAt: Date; price: number };
+  order: { id: string; createdAt: Date; pricePaidInCents: number };
   product: { imagePath: string; name: string; description: string };
   downloadVerificationId: string;
 };
@@ -43,7 +43,7 @@ export default function OrderInformation({
             <Text className="mb-0 text-gray-500 whitespace-nowrap text-nowrap">
               Price Paid
             </Text>
-            <Text className="mt-0 mr-4">{formatCurrency(order.price)}</Text>
+            <Text className="mt-0 mr-4">{formatCurrency(order.pricePaidInCents)}</Text>
           </Column>
         </Row>
       </Section>
