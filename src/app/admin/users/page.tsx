@@ -15,7 +15,7 @@ import {
   import { MoreVertical } from "lucide-react"
 import { PageHeader } from "../_components/PageHeader"
 import { formatCurrency, formatNumber } from "@/src/lib/formatters"
-import { DeleteDropdownItem } from "../products/_components/ProductActions"
+import { DeleteDropDownItem } from "./_components/UserActions"
   
   function getUsers() {
     return db.user.findMany({
@@ -72,7 +72,7 @@ import { DeleteDropdownItem } from "../products/_components/ProductActions"
                     <span className="sr-only">Actions</span>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent>
-                    <DeleteDropdownItem id={user.id} disabled={false} />
+                    <DeleteDropDownItem id={user.id} disabled={false} />
                   </DropdownMenuContent>
                 </DropdownMenu>
               </TableCell>

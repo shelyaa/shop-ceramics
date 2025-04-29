@@ -8,7 +8,7 @@ import {
   Preview,
   Tailwind,
 } from "@react-email/components";
-import OrderInformation from "./components/OrderInformation";
+import { OrderInformation } from "./components/OrderInformation";
 import React from "react";
 
 type OrderHistoryEmailProps = {
@@ -32,25 +32,23 @@ OrderHistoryEmail.PreviewProps = {
       createdAt: new Date(),
       pricePaidInCents: 10000,
       downloadVerificationId: crypto.randomUUID(),
-
       product: {
         name: "Product name",
+        description: "Some description",
         imagePath:
-          "/products/88ba2304-ef92-43ca-bd7c-800999675d46-photo_2025-04-08_13-12-45.jpg",
-        description: "Some dsc",
+          "/products/2bee3c8a-e2bd-47f9-9733-e8c52e12912a-photo_2025-04-08_13-12-43.jpg",
       },
     },
     {
       id: crypto.randomUUID(),
       createdAt: new Date(),
-      pricePaidInCents: 10000,
+      pricePaidInCents: 2000,
       downloadVerificationId: crypto.randomUUID(),
-
       product: {
         name: "Product name 2",
+        description: "Some other desc",
         imagePath:
-          "public/products/88ba2304-ef92-43ca-bd7c-800999675d46-photo_2025-04-08_13-12-45.jpg",
-        description: "Some other dsc",
+          "/products/2bee3c8a-e2bd-47f9-9733-e8c52e12912a-photo_2025-04-08_13-12-43.jpg",
       },
     },
   ],
@@ -66,11 +64,11 @@ export default function OrderHistoryEmail({ orders }: OrderHistoryEmailProps) {
           <Container className="max-w-xl">
             <Heading>Order History</Heading>
             {orders.map((order, index) => (
-              <React.Fragment key={order.id} >
+              <React.Fragment key={order.id}>
                 <OrderInformation
                   order={order}
                   product={order.product}
-                  downloadVerificationId={(order.downloadVerificationId)}
+                  downloadVerificationId={order.downloadVerificationId}
                 />
                 {index < orders.length - 1 && <Hr />}
               </React.Fragment>

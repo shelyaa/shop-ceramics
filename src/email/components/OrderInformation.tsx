@@ -1,4 +1,4 @@
-import { formatCurrency } from "@/src/lib/formatters";
+import { formatCurrency } from "@/src/lib/formatters"
 import {
   Button,
   Column,
@@ -6,17 +6,17 @@ import {
   Row,
   Section,
   Text,
-} from "@react-email/components";
+} from "@react-email/components"
 
 type OrderInformationProps = {
-  order: { id: string; createdAt: Date; pricePaidInCents: number };
-  product: { imagePath: string; name: string; description: string };
-  downloadVerificationId: string;
-};
+  order: { id: string; createdAt: Date; pricePaidInCents: number }
+  product: { imagePath: string; name: string; description: string }
+  downloadVerificationId: string
+}
 
-const dateFormatter = new Intl.DateTimeFormat("en", { dateStyle: "medium" });
+const dateFormatter = new Intl.DateTimeFormat("en", { dateStyle: "medium" })
 
-export default function OrderInformation({
+export function OrderInformation({
   order,
   product,
   downloadVerificationId,
@@ -26,13 +26,13 @@ export default function OrderInformation({
       <Section>
         <Row>
           <Column>
-            <Text className="mb-0 text-gray-500 whitespace-nowrap text-nowrap">
+            <Text className="mb-0 text-gray-500 whitespace-nowrap text-nowrap mr-4">
               Order ID
             </Text>
             <Text className="mt-0 mr-4">{order.id}</Text>
           </Column>
           <Column>
-            <Text className="mb-0 text-gray-500 whitespace-nowrap text-nowrap">
+            <Text className="mb-0 text-gray-500 whitespace-nowrap text-nowrap mr-4">
               Purchased On
             </Text>
             <Text className="mt-0 mr-4">
@@ -40,18 +40,20 @@ export default function OrderInformation({
             </Text>
           </Column>
           <Column>
-            <Text className="mb-0 text-gray-500 whitespace-nowrap text-nowrap">
+            <Text className="mb-0 text-gray-500 whitespace-nowrap text-nowrap mr-4">
               Price Paid
             </Text>
-            <Text className="mt-0 mr-4">{formatCurrency(order.pricePaidInCents)}</Text>
+            <Text className="mt-0 mr-4">
+              {formatCurrency(order.pricePaidInCents / 100)}
+            </Text>
           </Column>
         </Row>
       </Section>
       <Section className="border border-solid border-gray-500 rounded-lg p-4 md:p-6 my-4">
         <Img
-          src={`${process.env.NEXT_PUBLIC_SERVER_URL}${product.imagePath}`}
-          alt={product.name}
           width="100%"
+          alt={product.name}
+          src={`${process.env.NEXT_PUBLIC_SERVER_URL}${product.imagePath}`}
         />
         <Row className="mt-8">
           <Column className="align-bottom">
@@ -68,9 +70,10 @@ export default function OrderInformation({
         </Row>
         <Row>
           <Column>
-          <Text className="text-gray-500 mb0">{product.description}</Text></Column>
+            <Text className="text-gray-500 mb-0">{product.description}</Text>
+          </Column>
         </Row>
       </Section>
     </>
-  );
+  )
 }

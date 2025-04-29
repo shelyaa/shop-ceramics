@@ -6,6 +6,16 @@ import fs from "fs/promises";
 import { notFound, redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 
+const categoryEnum = z.enum([
+  "MUG",
+  "GLASS",
+  "TEASET",
+  "DECORATION",
+  "VASE",
+  "SCULPTURE",
+  "OTHER",
+]);
+
 const fileSchema = z.instanceof(File, {
   message: "Required",
 });
@@ -17,6 +27,7 @@ const addSchema = z.object({
   name: z.string().min(1),
   description: z.string().min(1),
   priceInCents: z.coerce.number().int().min(1),
+  category: categoryEnum,
   file: fileSchema.refine((file) => file.size > 0, "Required"),
   image: imageSchema.refine((file) => file.size > 0, "Required"),
 });
@@ -47,6 +58,7 @@ export async function addProduct(prevState: unknown, formData: FormData) {
       name: data.name,
       description: data.description,
       priceInCents: data.priceInCents,
+      category: data.category,
       filePath,
       imagePath,
     },
@@ -106,6 +118,7 @@ export async function updateProduct(
       name: data.name,
       description: data.description,
       priceInCents: data.priceInCents,
+      category: data.category,
       filePath,
       imagePath,
     },

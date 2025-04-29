@@ -5,7 +5,9 @@ import { CheckoutForm } from "./_components/CheckoutForm";
 
 export const dynamicParams = true;
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string);
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
+  apiVersion: "2025-03-31.basil",
+});
 
 export default async function PurchasePage({ params }: { params: { id: string } }) {
   const product = await db.product.findUnique({

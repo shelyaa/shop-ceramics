@@ -1,3 +1,4 @@
+import Hero from "@/src/components/Hero";
 import { ProductCard, ProductCardSkeleton } from "@/src/components/ProductCard";
 import { Button } from "@/src/components/ui/button";
 import db from "@/src/db/db";
@@ -26,13 +27,16 @@ const  getNewestProducts = cache(() => {
 
 export default function HomePage() {
   return (
-    <main className="space-y-12">
-      <ProductGridSection
-        title="Most Popular"
-        productsFetcher={getMostPopularProducts}
-      />
-      <ProductGridSection title="Newest" productsFetcher={getNewestProducts} />
-    </main>
+    <>
+   <main className="space-y-12">
+   <Hero />
+   <ProductGridSection
+     title="Most Popular"
+     productsFetcher={getMostPopularProducts}
+   />
+   <ProductGridSection title="Newest" productsFetcher={getNewestProducts} />
+ </main>
+ </>
   );
 }
 
@@ -47,9 +51,9 @@ function ProductGridSection({
 }: ProductGridSectionProps) {
   return (
     <div className="space-y-4">
-      <div className="flex-gap-4">
+        <div className="flex gap-4">
         <h2 className="text-3xl font-bold">{title}</h2>
-        <Button variant="outline" asChild className="mt-2">
+        <Button variant="outline" asChild>
           <Link href="/products" className="space-x-2">
             <span>View All</span>
             <ArrowRight className="size-4" />
@@ -82,3 +86,4 @@ async function ProductSuspense({
     <ProductCard key={product.id} {...product} />
   ));
 }
+

@@ -17,7 +17,9 @@ export function ProductForm({ product }: { product?: Product | null }) {
     product == null ? addProduct : updateProduct.bind(null, product.id),
     {}
   );
-  const [priceInCents, setPriceInCents] = useState<number | undefined>(product?.priceInCents);
+  const [priceInCents, setPriceInCents] = useState<number | undefined>(
+    product?.priceInCents
+  );
 
   return (
     <form action={action} className="space-y-8">
@@ -45,7 +47,30 @@ export function ProductForm({ product }: { product?: Product | null }) {
         <div className="text-muted-foreground">
           {formatCurrency((priceInCents || 0) / 100)}
         </div>
-        {error.priceInCents && <div className="text-destructive">{error.priceInCents}</div>}
+        {error.priceInCents && (
+          <div className="text-destructive">{error.priceInCents}</div>
+        )}
+      </div>
+      <div className="space-y-2">
+        <Label htmlFor="category">Category</Label>
+        <select
+          id="category"
+          name="category"
+          defaultValue={product?.category || "MUG"}
+          className="border rounded px-3 py-2 w-full"
+          required
+        >
+          <option value="MUG">Mug</option>
+          <option value="GLASS">Glass</option>
+          <option value="TEASET">Tea set</option>
+          <option value="DECORATION">Decoration</option>
+          <option value="VASE">Vase</option>
+          <option value="SCULPTURE">Sculpture</option>
+          <option value="OTHER">Other</option>
+        </select>
+        {error.category && (
+          <div className="text-destructive">{error.category}</div>
+        )}
       </div>
       <div className="space-y-2">
         <Label htmlFor="description">Description</Label>
