@@ -36,7 +36,7 @@ OrderHistoryEmail.PreviewProps = {
         name: "Product name",
         description: "Some description",
         imagePath:
-          "/products/2bee3c8a-e2bd-47f9-9733-e8c52e12912a-photo_2025-04-08_13-12-43.jpg",
+          "/products/7b60d752-f400-4cde-bc05-5fa0b1c57a46-Green Star.jpg",
       },
     },
     {

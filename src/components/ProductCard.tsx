@@ -1,4 +1,5 @@
-import Link from "next/link";
+"use client"
+import { useProductModal } from "../app/(customerFacing)/context/ProductModalContext";
 import { formatCurrency } from "../lib/formatters";
 import { Button } from "./ui/button";
 import {
@@ -26,8 +27,9 @@ export function ProductCard({
   description,
   imagePath,
 }: ProductCardProps) {
+  const {openModal} = useProductModal();
   return (
-    <Card className="flex overflow-hidden flex-col">
+    <Card className="flex overflow-hidden flex-col" onClick={() => openModal({name, priceInCents, description, imagePath, id})}>
       <div className="relative w-full aspect-[3/4] max-h-100">
         <Image src={imagePath} fill alt={name} className="object-cover"/>
       </div>
@@ -36,11 +38,6 @@ export function ProductCard({
         <CardDescription>{formatCurrency(priceInCents / 100)}</CardDescription>
       </CardHeader>
       <CardContent className="flex-grow">{description}</CardContent>
-      <CardFooter>
-        <Button asChild size="lg" className="w-full">
-          <Link href={`/products/${id}/purchase`}>Purchase</Link>
-        </Button>
-      </CardFooter>
     </Card>
   );
 }

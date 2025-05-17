@@ -1,40 +1,21 @@
-import { ProductCard, ProductCardSkeleton } from "@/src/components/ProductCard";
-import db from "@/src/db/db";
-import { cache } from "@/src/lib/cache";
+import { ProductCardSkeleton } from "@/src/components/ProductCard";
 import { Suspense } from "react";
-
-const getProducts = cache(() => {
-    return db.product.findMany({
-        where: { isAvailableForPurchase: true },
-        orderBy: { name: "asc" },
-      });
-}, ["/products", "getProducts"]) 
-
+import ProductsSuspense from "@/src/app/(customerFacing)/products/components/ProductsSuspense";
 
 export default function ProductsPage() {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    <div>
       <Suspense
-        fallback={
-          <>
-            <ProductCardSkeleton />
-            <ProductCardSkeleton />
-            <ProductCardSkeleton />
-            <ProductCardSkeleton />
-            <ProductCardSkeleton />
-            <ProductCardSkeleton />
-          </>
-        }
+          fallback={
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {[...Array(6)].map((_, i) => (
+                <ProductCardSkeleton key={i} />
+              ))}
+            </div>
+          }
       >
         <ProductsSuspense />
       </Suspense>
     </div>
   );
-}
-
-async function ProductsSuspense() {
-  const products = await getProducts();
-  return products.map((product) => (
-    <ProductCard key={product.id} {...product} />
-  ));
 }

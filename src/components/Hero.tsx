@@ -1,9 +1,10 @@
 import Image from "next/image";
-import heroImage from "@/src/assets/sticker.webp"; // заміни на свій шлях
+import heroImage from "@/src/assets/sticker.webp";
 
 export default function Hero() {
   return (
-    <section className="relative bg-[#e6e6ff] px-6 py-20 lg:px-16 overflow-hidden">
+    <>
+    <section className="relative bg-[#beccff] px-6 py-20 lg:px-16 overflow-hidden rounded-3xl">
       <div className="max-w-screen-xl mx-auto relative z-10">
         <h1 className="text-[5rem] leading-[1.1] font-semibold tracking-tight text-black whitespace-pre-line">
           {"OBJECTS OF EARTH\nCRAFTED BY HAND\n{ IN ODESA }"}
@@ -15,7 +16,7 @@ export default function Hero() {
         <div className="mt-12">
           <a
             href="/collections"
-            className="inline-block bg-black text-white px-8 py-4 text-base font-semibold rounded-full hover:bg-neutral-800 transition"
+            className="inline-block bg-[#0059b3] hover:bg-[#005ab3cf] text-white px-8 py-4 text-base rounded-3xl font-semibold transition"
           >
             EXPLORE COLLECTION
           </a>
@@ -32,5 +33,6 @@ export default function Hero() {
         />
       </div>
     </section>
+    </>
   );
 }

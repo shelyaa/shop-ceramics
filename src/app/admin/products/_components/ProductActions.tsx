@@ -45,6 +45,7 @@ export function DeleteDropdownItem({
   return (
     <DropdownMenuItem
       disabled={disabled || isPending}
+       variant="destructive"
       onClick={() => {
         startTransition(async () => {
           await deleteProduct(id);

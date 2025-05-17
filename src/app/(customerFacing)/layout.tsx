@@ -3,6 +3,7 @@ import logoSrc from "@/src/assets/svitanok.svg";
 import Image from "next/image";
 import Link from "next/link";
 import { Heart, ShoppingBag } from "lucide-react"; // або будь-які інші іконки
+import { ProductModalProvider } from "./context/ProductModalContext";
 
 export const dynamic = "force-dynamic";
 
@@ -19,7 +20,7 @@ export default function Layout({
             <Image src={logoSrc} alt="svitanok logo" width={110} height={110} priority />
           </Link>
 
-          <div className="flex">
+          <div className="flex font-semibold uppercase">
           <NavLink href="/">Home</NavLink>
           <NavLink href="/collections">Collections</NavLink>
           <NavLink href="/products">Products</NavLink>
@@ -30,7 +31,7 @@ export default function Layout({
             <Link href="/favorites" aria-label="Обране">
               <Heart className="w-6 h-6" />
             </Link>
-            <Link href="/cart" aria-label="Кошик">
+            <Link href="/purchase" aria-label="Кошик">
               <ShoppingBag className="w-6 h-6" />
             </Link>
           </div>
@@ -38,7 +39,7 @@ export default function Layout({
       </Nav>
 
       <div className="container mx-auto my-4 flex justify-center">
-        <div className="w-full max-w-7xl">{children}</div>
+        <ProductModalProvider><div className="w-full max-w-7xl">{children}</div></ProductModalProvider>
       </div>
     </>
   );

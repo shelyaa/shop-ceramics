@@ -72,7 +72,7 @@ import { DeleteDropDownItem } from "./_components/UserActions"
                     <span className="sr-only">Actions</span>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent>
-                    <DeleteDropDownItem id={user.id} disabled={false} />
+                    <DeleteDropDownItem id={user.id} />
                   </DropdownMenuContent>
                 </DropdownMenu>
               </TableCell>
