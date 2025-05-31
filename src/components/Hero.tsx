@@ -15,7 +15,7 @@ export default function Hero() {
 
         <div className="mt-12">
           <a
-            href="/collections"
+            href="/products"
             className="inline-block bg-[#0059b3] hover:bg-[#005ab3cf] text-white px-8 py-4 text-base rounded-3xl font-semibold transition"
           >
             EXPLORE COLLECTION

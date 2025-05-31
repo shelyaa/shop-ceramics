@@ -39,7 +39,6 @@ export function ProductForm({ product }: { product?: Product | null }) {
 
   return (
     <form action={action} className="space-y-8">
-      {/* Name */}
       <div className="space-y-2">
         <Label htmlFor="name">Name</Label>
         <Input
@@ -53,7 +52,6 @@ export function ProductForm({ product }: { product?: Product | null }) {
         {error.name && <div className="text-destructive">{error.name}</div>}
       </div>
 
-      {/* Price */}
       <div className="space-y-2">
         <Label htmlFor="price">Price</Label>
         <Input

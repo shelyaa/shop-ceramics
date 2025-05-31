@@ -1,15 +1,8 @@
 import Image from "next/image";
-import Link from "next/link";
 import { useState } from "react";
 import ZoomedImage from "./ZoomedImageComponent";
-
-interface Product {
-  id: string;
-  name: string;
-  priceInCents: number;
-  description: string;
-  imagePath: string;
-}
+import AddToCart from "@/src/components/AddToCart";
+import { Product } from "@prisma/client";
 
 interface Props {
   product: Product;
@@ -59,14 +52,10 @@ export default function ProductModal({ product, onClose }: Props) {
               <div>
                 <h2 className="text-2xl font-bold mb-2">{product.name}</h2>
                 <p className="text-lg font-medium mb-2">
-                  {product.priceInCents / 100} €
+                  {product.priceInCents / 100} $
                 </p>
                 <p className="mb-4">{product.description}</p>
-                <Link href={`/products/${product.id}/purchase`} onClick={onClose}>
-                  <button className="px-6 py-2 font-medium border-2 border-black hover:bg-[#0059b3] hover:border-[#0059b3] hover:text-white transition w-full">
-                    ADD TO CART
-                  </button>
-                </Link>
+                <AddToCart product={product} onClose={onClose}/>
               </div>
             </div>
           </div>
