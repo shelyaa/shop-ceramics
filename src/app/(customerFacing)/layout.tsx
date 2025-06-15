@@ -7,6 +7,8 @@ import { Menu, User, X } from "lucide-react";
 import { ProductModalProvider } from "./context/ProductModalContext";
 import { CartBadge } from "./products/components/CartBadge";
 import { useState } from "react";
+import { useAuth } from "@/src/hooks/use-auth";
+import ScrollToTop from "./products/components/ScrollToTop";
 
 export const dynamic = "force-dynamic";
 
@@ -16,9 +18,12 @@ export default function Layout({
   children: React.ReactNode;
 }>) {
   const [menuOpen, setMenuOpen] = useState(false);
+  const { isAuth } = useAuth();
 
   return (
     <>
+            <ScrollToTop />
+    
       <Nav>
         <div className="container mx-auto flex items-center justify-between py-3">
           <Link href="/">
@@ -38,7 +43,7 @@ export default function Layout({
 
           <div className="flex space-x-6">
             <CartBadge />
-            <Link href="/account" aria-label="Аккаунт" className="relative">
+            <Link href={isAuth ? "/account/my-account" : "/account" }aria-label="Аккаунт" className="relative">
               <User className="w-6 h-6" />
             </Link>
             <button

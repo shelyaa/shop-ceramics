@@ -15,11 +15,12 @@ export default function AddToCart({ product, onClose }: Props) {
   const handleAddToCart = () => {
     dispatch(addToCart({ ...product, qty: 1 }));
     onClose();
-    setTimeout(() => router.push("/purchase"), 200);
+    setTimeout(() => router.push("/cart"), 200);
   };
+  
   return (
     <button
-      className="px-6 py-2 font-medium border-2 border-black hover:bg-[#0059b3] hover:border-[#0059b3] hover:text-white transition w-full"
+      className="px-6 py-2 font-medium border-2 border-black hover:bg-[#0059b3] hover:border-[#0059b3] hover:text-white transition w-ful rounded-sm"
       onClick={(e) => {
         e.stopPropagation();
         handleAddToCart();

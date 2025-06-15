@@ -53,9 +53,10 @@ export function OrderInformation({
       </Section>
       <Section className="border border-solid border-gray-500 rounded-lg p-4 md:p-6 my-4">
         <Img
-          width="100%"
+          width="300px"
           alt={product.name}
           src={`${serverUrl}${product.imagePath}`}
+          className="m-auto"
         />
         <Row className="mt-8">
           <Column className="align-bottom">

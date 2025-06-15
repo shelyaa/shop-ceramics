@@ -27,7 +27,7 @@ export default function ProductModal({ product, onClose }: Props) {
           onClick={onClose}
         >
           <div
-            className="bg-neutral-100 max-w-4xl w-full p-6 relative rounded shadow-lg overflow-auto"
+            className="bg-neutral-100 max-w-4xl w-full p-6 relative rounded-2xl shadow-lg overflow-auto"
             onClick={(e) => e.stopPropagation()}
           >
             <button
@@ -37,12 +37,12 @@ export default function ProductModal({ product, onClose }: Props) {
               ×
             </button>
 
-            <div className="flex flex-col md:flex-row gap-6">
+            <div className="flex flex-col md:flex-row gap-6 ">
               <div className="flex-shrink-0 w-[400px] h-[400px] overflow-hidden cursor-zoom-in">
                 <Image
                   src={product.imagePath}
                   alt={product.name}
-                  className="object-cover w-full h-full"
+                  className="object-cover w-full h-full rounded-xl"
                   width={400}
                   height={400}
                   onClick={handleImageClick}

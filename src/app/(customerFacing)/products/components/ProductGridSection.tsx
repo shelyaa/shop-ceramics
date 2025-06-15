@@ -19,7 +19,7 @@ export function ProductGridSection({
     <div className="space-y-4">
       <div className="flex gap-4">
         <h2 className="text-2xl font-bold">{title}</h2>
-        <Button variant="outline" asChild className="hover:bg-[#0059b3] hover:text-white rounded-3xl">
+        <Button variant="outline" asChild className="hover:bg-[#0059b3] hover:text-white rounded-md">
           <Link href="/products" className="space-x-2 ">
             <span >VIEW ALL</span>
             <ArrowRight className="size-4" />
