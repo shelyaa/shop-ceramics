@@ -8,8 +8,11 @@ export const dynamicParams = true;
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
   apiVersion: "2025-03-31.basil",
 });
-
-export default async function PurchasePage({ params }: { params: { id: string } }) {
+type PurchasePageProps = {
+  params: { id: string }
+  searchParams?: Record<string, string | string[] | undefined>
+}
+export default async function PurchasePage({ params }: PurchasePageProps) {
   const product = await db.product.findUnique({
     where: { id: params.id },
   });
