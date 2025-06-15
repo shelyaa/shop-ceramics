@@ -1,8 +1,6 @@
-import { Button } from "@/src/components/ui/button";
 import db from "@/src/db/db";
 import { formatCurrency } from "@/src//lib/formatters";
 import Image from "next/image";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import Stripe from "stripe";
 
@@ -63,13 +61,13 @@ export default async function SuccessPage({
   );
 }
 
-async function createDownloadVerification(productId: string) {
-  return (
-    await db.downloadVerification.create({
-      data: {
-        productId,
-        expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24),
-      },
-    })
-  ).id;
-}
+// async function createDownloadVerification(productId: string) {
+//   return (
+//     await db.downloadVerification.create({
+//       data: {
+//         productId,
+//         expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24),
+//       },
+//     })
+//   ).id;
+// }

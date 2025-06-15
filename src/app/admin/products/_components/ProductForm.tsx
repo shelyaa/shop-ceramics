@@ -21,7 +21,7 @@ export function ProductForm({ product }: { product?: Product | null }) {
   });
 
   const [error, action] = useActionState(
-    async (prevState: any, formData: FormData) => {
+    async (prevState: unknown, formData: FormData) => {
       return product == null
         ? addProduct(prevState, formData)
         : updateProduct(product.id, prevState, formData);
@@ -63,7 +63,7 @@ export function ProductForm({ product }: { product?: Product | null }) {
           onChange={handleChange}
         />
         <div className="text-muted-foreground">
-          {formatCurrency((formData.priceInCents || 0) / 100)}
+          {formatCurrency(Number(formData.priceInCents || 0) / 100)}
         </div>
         {error.priceInCents && (
           <div className="text-destructive">{error.priceInCents}</div>

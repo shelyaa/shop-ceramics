@@ -1,12 +1,12 @@
 import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
 import { setUser, removeUser } from "@/src/redux/slices/userSlice";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { getFirebaseApp } from "@/src/firebase";
+import { useAppDispatch, useAppSelector } from "./redux-hooks";
 
 export function useAuth() {
-  const dispatch = useDispatch();
-  const { email, token, id } = useSelector((state: any) => state.user);
+  const dispatch = useAppDispatch();
+  const { email, token, id } = useAppSelector((state) => state.user);
 
   useEffect(() => {
     getFirebaseApp();

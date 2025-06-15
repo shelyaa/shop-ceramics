@@ -4,7 +4,6 @@ import "./globals.css";
 import { cn } from "../lib/utils";
 import { StoreProvider } from "../redux/StoreProvider";
 import "../firebase"; 
-import ScrollToTop from "./(customerFacing)/products/components/ScrollToTop";
 
 
 const geistSans = Geist({

@@ -46,7 +46,7 @@ export default function PurchasePage() {
       setShowAuthMessage(true);
       setTimeout(() => {
         router.push(`/account/?redirect=/purchase-cart?cart=${cartParam}`);
-      }, 2500);
+      }, 2000);
       return;
     }
     setShowAuthMessage(false);
