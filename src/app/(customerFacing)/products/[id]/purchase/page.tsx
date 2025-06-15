@@ -14,7 +14,7 @@ type PurchasePageProps = {
   searchParams?: Record<string, string | string[] | undefined>
 }
 
-export default async function PurchasePage({ params }: PurchasePageProps) {
+export default async function PurchasePageForOneProduct({ params }: PurchasePageProps) {
   const product = await db.product.findUnique({
     where: { id: params.id },
   });
