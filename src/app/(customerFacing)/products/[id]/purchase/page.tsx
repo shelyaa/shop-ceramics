@@ -8,16 +8,18 @@ export const dynamicParams = true;
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
   apiVersion: "2025-03-31.basil",
 });
+
 type PurchasePageProps = {
   params: { id: string }
   searchParams?: Record<string, string | string[] | undefined>
 }
+
 export default async function PurchasePage({ params }: PurchasePageProps) {
   const product = await db.product.findUnique({
     where: { id: params.id },
   });
 
-  if (product === null) return notFound();
+  if (!product) return notFound();
 
   const paymentIntent = await stripe.paymentIntents.create({
     amount: product.priceInCents,
