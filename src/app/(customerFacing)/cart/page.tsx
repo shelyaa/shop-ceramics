@@ -52,7 +52,7 @@ export default function PurchasePage() {
     setShowAuthMessage(false);
     setCheckoutDisabled(false);
     setButtonText("CHECKOUT");
-    router.push(`/purchase-cart?cart=${cartParam}/`);
+    router.push(`/purchase-cart?cart=${cartParam}`);
   };
 
   return (
