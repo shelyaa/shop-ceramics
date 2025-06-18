@@ -16,6 +16,7 @@ export function ProductForm({ product }: { product?: Product | null }) {
   const [formData, setFormData] = useState({
     name: product?.name || "",
     priceInCents: product?.priceInCents || "",
+    quantity: product?.quantity || "1",
     category: product?.category || "MUG",
     description: product?.description || "",
   });
@@ -28,7 +29,11 @@ export function ProductForm({ product }: { product?: Product | null }) {
     },
     {}
   );
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
+  ) => {
     const { name, value } = e.target;
 
     setFormData((prev) => ({
@@ -69,8 +74,22 @@ export function ProductForm({ product }: { product?: Product | null }) {
           <div className="text-destructive">{error.priceInCents}</div>
         )}
       </div>
+      <div className="space-y-2">
+        <Label htmlFor="quantity">Quantity</Label>
+        <Input
+          type="number"
+          id="quantity"
+          name="quantity"
+          required
+          value={formData.quantity}
+          onChange={handleChange}
+        />
 
-      {/* Category */}
+        {error.quantity && (
+          <div className="text-destructive">{error.quantity}</div>
+        )}
+      </div>
+
       <div className="space-y-2">
         <Label htmlFor="category">Category</Label>
         <select

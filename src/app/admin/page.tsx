@@ -9,14 +9,20 @@ import db from "@/src/db/db";
 import { formatCurrency, formatNumber } from "@/src/lib/formatters";
 
 async function getSalesData() {
-  const data = await db.order.aggregate({
-    _sum: { pricePaidInCents: true },
-    _count: true,
-  })
+  const [orderAgg, soldAgg] = await Promise.all([
+    db.order.aggregate({
+      _sum: { pricePaidInCents: true },
+      _count: { id: true },
+    }),
+    db.orderItem.aggregate({
+      _sum: { quantity: true },
+    }),
+  ]);
 
   return {
-    amount: (data._sum.pricePaidInCents || 0) / 100,
-    numberOfSales: data._count,
+    amount: (orderAgg._sum.pricePaidInCents || 0) / 100,
+    numberOfOrders: orderAgg._count.id,
+    numberOfProductsSold: soldAgg._sum.quantity || 0,
   }
 }
 
@@ -57,7 +63,7 @@ export default async function AdminDashboard() {
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       <DashboardCard
         title="Sales"
-        subtitle={`${formatNumber(salesData.numberOfSales)} Orders`}
+        subtitle={`${formatNumber(salesData.numberOfOrders)} Orders, ${formatNumber(salesData.numberOfProductsSold)} Products`}
         body={formatCurrency(salesData.amount)}
       />
       <DashboardCard

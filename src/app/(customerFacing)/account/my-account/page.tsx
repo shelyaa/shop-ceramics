@@ -70,9 +70,8 @@ export default function MyAccount() {
                   required
                   name="email"
                   id="email"
-                  value={email}
                   className="rounded-lg border-gray-300"
-                
+                  defaultValue={email ?? ""}
                 />
                 {data.error && (
                   <div className="text-destructive">{data.error}</div>

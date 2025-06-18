@@ -1,7 +1,6 @@
 import { addToCart } from "../redux/slices/cartSlice";
 import { useDispatch } from "react-redux";
 import { Product } from "@prisma/client";
-import { useRouter } from "next/navigation";
 
 type Props = {
   product: Product;
@@ -10,12 +9,10 @@ type Props = {
 
 export default function AddToCart({ product, onClose }: Props) {
   const dispatch = useDispatch();
-  const router = useRouter();
 
   const handleAddToCart = () => {
-    dispatch(addToCart({ ...product, qty: 1 }));
+    dispatch(addToCart({ ...product, quantity: 1 }));
     onClose();
-    setTimeout(() => router.push("/cart"), 200);
   };
   
   return (

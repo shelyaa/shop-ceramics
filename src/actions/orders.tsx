@@ -5,18 +5,17 @@ import db from "../db/db";
 import { Resend } from "resend";
 import OrderHistoryEmail from "../email/OrderHistory";
 
-
-const emailSchema = z.string().email()
-const resend = new Resend(process.env.RESEND_API_KEY as string)
+const emailSchema = z.string().email();
+const resend = new Resend(process.env.RESEND_API_KEY as string);
 
 export async function emailOrderHistory(
   prevState: unknown,
   formData: FormData
 ): Promise<{ message?: string; error?: string }> {
-  const result = emailSchema.safeParse(formData.get("email"))
+  const result = emailSchema.safeParse(formData.get("email"));
 
   if (result.success === false) {
-    return { error: "Invalid email address" }
+    return { error: "Invalid email address" };
   }
 
   const user = await db.user.findUnique({
@@ -28,53 +27,75 @@ export async function emailOrderHistory(
           pricePaidInCents: true,
           id: true,
           createdAt: true,
-          product: {
+          orderItems: {
             select: {
-              id: true,
-              name: true,
-              imagePath: true,
-              description: true,
+              quantity: true,
+              product: {
+                select: {
+                  id: true,
+                  name: true,
+                  imagePath: true,
+                  description: true,
+                },
+              },
             },
           },
         },
       },
     },
-  })
+  });
 
   if (user == null) {
     return {
       message:
         "Check your email to view your order history and download your products.",
-    }
+    };
   }
 
-  const orders = user.orders.map(async order => {
-    return {
-      ...order,
-      downloadVerificationId: (
-        await db.downloadVerification.create({
-          data: {
-            expiresAt: new Date(Date.now() + 24 * 1000 * 60 * 60),
-            productId: order.product.id,
-          },
-        })
-      ).id,
-    }
-  })
+  const orders = await Promise.all(
+    user.orders.map(async order => {
+      const orderItemsWithDownloadIds = await Promise.all(
+        order.orderItems.map(async orderItem => ({
+          ...orderItem,
+          downloadVerificationId: (
+            await db.downloadVerification.create({
+              data: {
+                expiresAt: new Date(Date.now() + 24 * 1000 * 60 * 60),
+                productId: orderItem.product.id,
+              },
+            })
+          ).id,
+        }))
+      );
+      return {
+        ...order,
+        orderItems: orderItemsWithDownloadIds,
+      };
+    })
+  );
+  const emailOrders = orders.flatMap(order =>
+    order.orderItems.map(orderItem => ({
+      id: order.id,
+      pricePaidInCents: order.pricePaidInCents,
+      createdAt: order.createdAt,
+      downloadVerificationId: orderItem.downloadVerificationId,
+      product: orderItem.product,
+    }))
+  );
 
   const data = await resend.emails.send({
     from: `Support <${process.env.SENDER_EMAIL}>`,
     to: user.email,
     subject: "Order History",
-    react: <OrderHistoryEmail orders={await Promise.all(orders)} />,
-  })
+    react: <OrderHistoryEmail orders={emailOrders} />,
+  });
 
   if (data.error) {
-    return { error: "There was an error sending your email. Please try again." }
+    return { error: "There was an error sending your email. Please try again." };
   }
 
   return {
     message:
       "Check your email to view your order history and download your products.",
-  }
+  };
 }

@@ -3,7 +3,7 @@ import Cookies from "js-cookie";
 
 interface CartItem {
   id: string;
-  qty: number;
+  quantity: number;
   priceInCents: number;
 }
 
@@ -47,7 +47,7 @@ const cartSlice = createSlice({
       }
 
       const itemsPrice = state.cartItems.reduce(
-        (acc, item) => acc + item.priceInCents * item.qty,
+        (acc, item) => acc + item.priceInCents * item.quantity,
         0
       );
 
@@ -64,7 +64,7 @@ const cartSlice = createSlice({
       state.cartItems = state.cartItems.filter((x) => x.id !== action.payload);
 
       const itemsPrice = state.cartItems.reduce(
-        (acc, item) => acc + item.priceInCents * item.qty,
+        (acc, item) => acc + item.priceInCents * item.quantity,
         0
       );
 
@@ -80,8 +80,16 @@ const cartSlice = createSlice({
     hideLoading: (state) => {
       state.loading = false;
     },
+    clearCart: (state) => {
+      state.cartItems = [];
+      state.itemsPrice = "0.00";
+      state.shippingPrice = "0.00";
+      state.totalPrice = "0.00";
+      Cookies.remove("cart");
+    },
   },
 });
 
-export const { addToCart, removeFromCart, hideLoading } = cartSlice.actions;
+export const { addToCart, removeFromCart, hideLoading, clearCart } =
+  cartSlice.actions;
 export default cartSlice.reducer;

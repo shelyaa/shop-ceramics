@@ -1,12 +1,9 @@
-// app/purchase-cart/page.tsx
-
 import Stripe from "stripe";
 import db from "@/src/db/db";
 import { notFound } from "next/navigation";
 import { CheckoutCartForm } from "./_components/CheckoutCartForm";
 
 export const dynamicParams = true;
-
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
   apiVersion: "2025-03-31.basil",
@@ -15,15 +12,17 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
 export default async function PurchaseCartPage({
   searchParams,
 }: {
-  searchParams: { cart: string };
+  searchParams: any;
 }) {
-  if (!searchParams.cart) return notFound();
+  const { cart } = await searchParams;
+
+  if (!cart) return notFound();
 
   let cartItems;
   try {
-    cartItems = JSON.parse(decodeURIComponent(searchParams.cart)) as {
+    cartItems = JSON.parse(decodeURIComponent(cart)) as {
       id: string;
-      qty: number;
+      quantity: number;
       priceInCents: number;
     }[];
   } catch {
@@ -37,24 +36,29 @@ export default async function PurchaseCartPage({
 
   const totalAmount = cartItems.reduce((acc, item) => {
     const price = products.find((p) => p.id === item.id)?.priceInCents || 0;
-    return acc + price * item.qty;
+    return acc + price * item.quantity;
   }, 0);
-
+  const minimalCart = cartItems.map((item) => ({
+    id: item.id,
+    quantity: item.quantity,
+  }));
   const paymentIntent = await stripe.paymentIntents.create({
     amount: totalAmount,
     currency: "usd",
     metadata: {
-      cart: JSON.stringify(cartItems.map((item) => item.id)),
+      cart: JSON.stringify(minimalCart),
     },
   });
 
   if (!paymentIntent.client_secret) throw new Error("Stripe error");
 
   return (
-    <CheckoutCartForm
-      products={products}
-      cartItems={cartItems}
-      clientSecret={paymentIntent.client_secret}
-    />
+    <div>
+      <CheckoutCartForm
+        products={products}
+        cartItems={cartItems}
+        clientSecret={paymentIntent.client_secret}
+      />
+    </div>
   );
 }

@@ -33,8 +33,8 @@ export default function PurchasePage() {
     dispatch(removeFromCart(id));
   };
 
-  const addToCartHandler = async (product: Product, qty: number) => {
-    dispatch(addToCart({ ...product, qty }));
+  const addToCartHandler = async (product: Product, quantity: number) => {
+    dispatch(addToCart({ ...product, quantity }));
   };
 
   const goToCheckout = () => {
@@ -71,8 +71,8 @@ export default function PurchasePage() {
           </Link>
         </div>
       ) : (
-        <div className="space-y-6">
-          <Table>
+        <div>
+          <Table  className="space-y-6">
             <TableHeader>
               <TableRow>
                 <TableHead>Product</TableHead>
@@ -98,15 +98,15 @@ export default function PurchasePage() {
                   <TableCell className="text-center">
                     <div className="flex items-center justify-center gap-2">
                       <button
-                        onClick={() => addToCartHandler(item, item.qty - 1)}
-                        disabled={item.qty === 1}
+                        onClick={() => addToCartHandler(item, item.quantity - 1)}
+                        disabled={item.quantity === 1}
                         className="text-xl px-2 disabled:text-gray-400"
                       >
                         −
                       </button>
-                      <span>{item.qty}</span>
+                      <span>{item.quantity}</span>
                       <button
-                        onClick={() => addToCartHandler(item, item.qty + 1)}
+                        onClick={() => addToCartHandler(item, item.quantity + 1)}
                         className="text-xl px-2"
                       >
                         +

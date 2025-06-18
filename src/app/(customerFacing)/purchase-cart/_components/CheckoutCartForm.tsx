@@ -21,6 +21,15 @@ import {
 } from "@/src/components/ui/card";
 import { formatCurrency } from "@/src/lib/formatters";
 import { userOrderExists } from "@/src/app/actions/orders";
+import { useAuth } from "@/src/hooks/use-auth";
+import { Input } from "@/src/components/ui/input";
+import { Label } from "@radix-ui/react-label";
+import PhoneInput from "react-phone-input-2";
+import "react-phone-input-2/lib/style.css";
+import Autocomplete from "@mui/material/Autocomplete";
+import TextField from "@mui/material/TextField";
+import citiesRaw from "../../../../data/cities.json";
+import { motion, AnimatePresence } from "framer-motion";
 
 const stripePromise = loadStripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY as string
@@ -36,7 +45,7 @@ type Product = {
 
 type CartItem = {
   id: string;
-  qty: number;
+  quantity: number;
   priceInCents: number;
 };
 
@@ -51,7 +60,7 @@ export function CheckoutCartForm({
 }) {
   const totalPrice = cartItems.reduce((acc, item) => {
     const product = products.find((p) => p.id === item.id);
-    return acc + (product?.priceInCents || 0) * item.qty;
+    return acc + (product?.priceInCents || 0) * item.quantity;
   }, 0);
 
   return (
@@ -80,16 +89,19 @@ export function CheckoutCartForm({
                 </div>
                 <div>
                   <span className="font-bold">
-                    {item.qty} × {formatCurrency(product.priceInCents / 100)}
+                    {item.quantity} ×{" "}
+                    {formatCurrency(product.priceInCents / 100)}
                   </span>
                 </div>
               </div>
             </Card>
           );
-        })}
+        })} 
       </div>
 
-      <Elements  options={{ clientSecret, locale: "en" }} stripe={stripePromise}>
+      <UserInfoForm />
+
+      <Elements options={{ clientSecret, locale: "en" }} stripe={stripePromise}>
         <Form totalPrice={totalPrice} cartItems={cartItems} />
       </Elements>
     </div>
@@ -107,7 +119,7 @@ function Form({
   const elements = useElements();
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string>();
-  const [email, setEmail] = useState<string>();
+  const { email } = useAuth();
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
@@ -139,9 +151,11 @@ function Form({
           setErrorMessage(error.message);
         } else {
           setErrorMessage("An unknown error occurred");
-        }
+        } 
       })
-      .finally(() => setIsLoading(false));
+      .finally(() => {
+        setIsLoading(false);
+      });
   }
 
   return (
@@ -159,7 +173,11 @@ function Form({
           <PaymentElement />
         </div>
         <div className="px-4 mt-4">
-          <LinkAuthenticationElement onChange={(e) => setEmail(e.value.email)} />
+          <LinkAuthenticationElement
+            options={{
+              defaultValues: { email: email || "" },
+            }}
+          />
         </div>
         <CardContent />
         <CardFooter>
@@ -173,6 +191,185 @@ function Form({
               : `Purchase All - ${formatCurrency(totalPrice / 100)}`}
           </Button>
         </CardFooter>
+      </Card>
+    </form>
+  );
+}
+
+type City = {
+  object_name: string;
+  object_category: string;
+};
+
+function capitalize(str: string) {
+  if (!str) return "";
+  return str[0].toUpperCase() + str.slice(1).toLowerCase();
+}
+
+const cities = citiesRaw as City[];
+const cityNames = Array.from(
+  new Set(
+    cities
+      .filter((c) => c.object_category === "Місто")
+      .map((city) => capitalize(city.object_name))
+  )
+);
+
+
+function UserInfoForm() {
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [city, setCity] = useState("");
+  const [deliveryDepartment, setDeliveryDepartment] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [formIsOpen, setFormIsOpen] = useState(true);
+
+  // Валідація
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState("");
+
+  function validate() {
+    const newErrors: { [key: string]: string } = {};
+    if (!firstName.trim()) newErrors.firstName = "Введіть ім'я";
+    if (!lastName.trim()) newErrors.lastName = "Введіть прізвище";
+    if (!city.trim()) newErrors.city = "Оберіть місто";
+    if (!deliveryDepartment.trim()) newErrors.deliveryDepartment = "Введіть номер відділення";
+    if (!/^\+380\d{9}$/.test(phoneNumber)) newErrors.phoneNumber = "Введіть коректний телефон";
+    return newErrors;
+  }
+
+  async function handleSubmit(e: FormEvent) {
+    e.preventDefault();
+    setSubmitError("");
+    const newErrors = validate();
+    setErrors(newErrors);
+    if (Object.keys(newErrors).length > 0) return;
+
+    setIsSubmitting(true);
+    try {
+      // API-запит для запису даних юзера в БД
+      const res = await fetch("/api/user-info", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          firstName,
+          lastName,
+          city,
+          deliveryDepartment,
+          phoneNumber,
+        }),
+      });
+      if (!res.ok) throw new Error("Помилка при збереженні даних");
+
+      setFormIsOpen(false);
+    } catch (err: any) {
+      setSubmitError(err.message || "Щось пішло не так");
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <Card>
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <CardTitle>Shipping</CardTitle>
+            {!formIsOpen && (
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => setFormIsOpen(true)}
+              >
+                Edit
+              </Button>
+            )}
+          </div>
+        </CardHeader>
+        <AnimatePresence initial={false}>
+          {formIsOpen && (
+            <motion.div
+              key="form"
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.35, ease: "easeInOut" }}
+              style={{ overflow: "hidden" }}
+            >
+              <CardContent className="space-y-3">
+                <div className="space-y-2">
+                  <Label htmlFor="firstName">First Name</Label>
+                  <Input
+                    id="firstName"
+                    name="firstName"
+                    value={firstName}
+                    onChange={e => setFirstName(e.target.value)}
+                  />
+                  {errors.firstName && <div className="text-destructive text-xs">{errors.firstName}</div>}
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="lastName">Last Name</Label>
+                  <Input
+                    id="lastName"
+                    name="lastName"
+                    value={lastName}
+                    onChange={e => setLastName(e.target.value)}
+                    
+                  />
+                  {errors.lastName && <div className="text-destructive text-xs">{errors.lastName}</div>}
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="phone">Phone Number</Label>
+                  <PhoneInput
+                    country="ua"
+                    inputClass="w-full"
+                    value={phoneNumber}
+                    onChange={phone => setPhoneNumber("+" + phone)}
+                    inputProps={{ required: true, name: "phone", id: "phone" }}
+                  />
+                  {errors.phoneNumber && <div className="text-destructive text-xs">{errors.phoneNumber}</div>}
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="city">Місто доставки</Label>
+                  <Autocomplete
+                    options={cityNames}
+                    value={city}
+                    onChange={(_, value) => setCity(value || "")}
+                    renderInput={(params) => (
+                      <TextField
+                        {...params}
+                        id="city"
+                        
+                        placeholder="Оберіть місто"
+                        error={!!errors.city}
+                        helperText={errors.city}
+                      />
+                    )}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="deliveryDepartment">Відділення доставки</Label>
+                  <Input
+                    id="deliveryDepartment"
+                    name="deliveryDepartment"
+                    value={deliveryDepartment}
+                    onChange={e => setDeliveryDepartment(e.target.value)}
+                    required
+                  />
+                  {errors.deliveryDepartment && <div className="text-destructive text-xs">{errors.deliveryDepartment}</div>}
+                </div>
+                {submitError && <div className="text-destructive text-xs">{submitError}</div>}
+              </CardContent>
+              <CardFooter>
+                <Button className="w-full" size="lg" type="submit" disabled={isSubmitting}>
+                  {isSubmitting ? "Збереження..." : "Перейти до оплати"}
+                </Button>
+              </CardFooter>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </Card>
     </form>
   );
