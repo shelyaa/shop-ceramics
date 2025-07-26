@@ -30,6 +30,7 @@ import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
 import citiesRaw from "../../../../data/cities.json";
 import { motion, AnimatePresence } from "framer-motion";
+import { useAppSelector } from "@/src/hooks/redux-hooks";
 
 const stripePromise = loadStripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY as string
@@ -96,7 +97,7 @@ export function CheckoutCartForm({
               </div>
             </Card>
           );
-        })} 
+        })}
       </div>
 
       <UserInfoForm />
@@ -151,7 +152,7 @@ function Form({
           setErrorMessage(error.message);
         } else {
           setErrorMessage("An unknown error occurred");
-        } 
+        }
       })
       .finally(() => {
         setIsLoading(false);
@@ -215,14 +216,16 @@ const cityNames = Array.from(
   )
 );
 
-
 function UserInfoForm() {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [city, setCity] = useState("");
-  const [deliveryDepartment, setDeliveryDepartment] = useState("");
+  const [deliveryDepartment, setDeliveryDepartment] = useState(1);
   const [phoneNumber, setPhoneNumber] = useState("");
   const [formIsOpen, setFormIsOpen] = useState(true);
+
+ 
+  const email = useAppSelector(state => state.user.email);
 
   // Валідація
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
@@ -231,15 +234,18 @@ function UserInfoForm() {
 
   function validate() {
     const newErrors: { [key: string]: string } = {};
-    if (!firstName.trim()) newErrors.firstName = "Введіть ім'я";
-    if (!lastName.trim()) newErrors.lastName = "Введіть прізвище";
-    if (!city.trim()) newErrors.city = "Оберіть місто";
-    if (!deliveryDepartment.trim()) newErrors.deliveryDepartment = "Введіть номер відділення";
-    if (!/^\+380\d{9}$/.test(phoneNumber)) newErrors.phoneNumber = "Введіть коректний телефон";
+    if (!firstName.trim()) newErrors.firstName = "Enter your first name";
+    if (!lastName.trim()) newErrors.lastName = "Enter your last name";
+    if (!city.trim()) newErrors.city = "Select a city";
+    if (!deliveryDepartment)
+      newErrors.deliveryDepartment = "Enter the department number";
+    if (!/^\+380\d{9}$/.test(phoneNumber))
+      newErrors.phoneNumber = "Enter a valid phone number";
+    if (!email) newErrors.email = "Email не знайдено (авторизуйтеся)";
     return newErrors;
   }
 
-  async function handleSubmit(e: FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setSubmitError("");
     const newErrors = validate();
@@ -247,27 +253,8 @@ function UserInfoForm() {
     if (Object.keys(newErrors).length > 0) return;
 
     setIsSubmitting(true);
-    try {
-      // API-запит для запису даних юзера в БД
-      const res = await fetch("/api/user-info", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          firstName,
-          lastName,
-          city,
-          deliveryDepartment,
-          phoneNumber,
-        }),
-      });
-      if (!res.ok) throw new Error("Помилка при збереженні даних");
 
-      setFormIsOpen(false);
-    } catch (err: any) {
-      setSubmitError(err.message || "Щось пішло не так");
-    } finally {
-      setIsSubmitting(false);
-    }
+    setFormIsOpen(false);
   }
 
   return (
@@ -305,9 +292,13 @@ function UserInfoForm() {
                     id="firstName"
                     name="firstName"
                     value={firstName}
-                    onChange={e => setFirstName(e.target.value)}
+                    onChange={(e) => setFirstName(e.target.value)}
                   />
-                  {errors.firstName && <div className="text-destructive text-xs">{errors.firstName}</div>}
+                  {errors.firstName && (
+                    <div className="text-destructive text-xs">
+                      {errors.firstName}
+                    </div>
+                  )}
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="lastName">Last Name</Label>
@@ -315,10 +306,13 @@ function UserInfoForm() {
                     id="lastName"
                     name="lastName"
                     value={lastName}
-                    onChange={e => setLastName(e.target.value)}
-                    
+                    onChange={(e) => setLastName(e.target.value)}
                   />
-                  {errors.lastName && <div className="text-destructive text-xs">{errors.lastName}</div>}
+                  {errors.lastName && (
+                    <div className="text-destructive text-xs">
+                      {errors.lastName}
+                    </div>
+                  )}
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="phone">Phone Number</Label>
@@ -326,13 +320,17 @@ function UserInfoForm() {
                     country="ua"
                     inputClass="w-full"
                     value={phoneNumber}
-                    onChange={phone => setPhoneNumber("+" + phone)}
+                    onChange={(phone) => setPhoneNumber("+" + phone)}
                     inputProps={{ required: true, name: "phone", id: "phone" }}
                   />
-                  {errors.phoneNumber && <div className="text-destructive text-xs">{errors.phoneNumber}</div>}
+                  {errors.phoneNumber && (
+                    <div className="text-destructive text-xs">
+                      {errors.phoneNumber}
+                    </div>
+                  )}
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="city">Місто доставки</Label>
+                  <Label htmlFor="city">Delivery City</Label>
                   <Autocomplete
                     options={cityNames}
                     value={city}
@@ -341,8 +339,7 @@ function UserInfoForm() {
                       <TextField
                         {...params}
                         id="city"
-                        
-                        placeholder="Оберіть місто"
+                        placeholder="Select a city"
                         error={!!errors.city}
                         helperText={errors.city}
                       />
@@ -350,21 +347,35 @@ function UserInfoForm() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="deliveryDepartment">Відділення доставки</Label>
+                  <Label htmlFor="deliveryDepartment">
+                  Delivery Department
+                  </Label>
                   <Input
                     id="deliveryDepartment"
                     name="deliveryDepartment"
                     value={deliveryDepartment}
-                    onChange={e => setDeliveryDepartment(e.target.value)}
+                    onChange={(e) => setDeliveryDepartment(Number(e.target.value))}
                     required
                   />
-                  {errors.deliveryDepartment && <div className="text-destructive text-xs">{errors.deliveryDepartment}</div>}
+                  {errors.deliveryDepartment && (
+                    <div className="text-destructive text-xs">
+                      {errors.deliveryDepartment}
+                    </div>
+                  )}
                 </div>
-                {submitError && <div className="text-destructive text-xs">{submitError}</div>}
+
+                {submitError && (
+                  <div className="text-destructive text-xs">{submitError}</div>
+                )}
               </CardContent>
               <CardFooter>
-                <Button className="w-full" size="lg" type="submit" disabled={isSubmitting}>
-                  {isSubmitting ? "Збереження..." : "Перейти до оплати"}
+                <Button
+                  className="w-full"
+                  size="lg"
+                  type="submit"
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? "Saving..." : "Proceed to Payment"}
                 </Button>
               </CardFooter>
             </motion.div>

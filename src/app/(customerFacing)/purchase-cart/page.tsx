@@ -12,7 +12,7 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
 export default async function PurchaseCartPage({
   searchParams,
 }: {
-  searchParams: any;
+  searchParams: Record<string, string | string[] | undefined>;
 }) {
   const { cart } = await searchParams;
 
@@ -20,7 +20,8 @@ export default async function PurchaseCartPage({
 
   let cartItems;
   try {
-    cartItems = JSON.parse(decodeURIComponent(cart)) as {
+    const cartString = Array.isArray(cart) ? cart[0] : cart;
+    cartItems = JSON.parse(decodeURIComponent(cartString)) as {
       id: string;
       quantity: number;
       priceInCents: number;
