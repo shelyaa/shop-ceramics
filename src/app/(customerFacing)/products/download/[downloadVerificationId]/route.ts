@@ -7,13 +7,13 @@ export async function GET(
   {
     params,
   }: {
-    params: Promise<{
+    params: {
       downloadVerificationId: string;
-    }>;
+    };
   }
 ) {
   const { downloadVerificationId } = await params;
-  
+
   const data = await db.downloadVerification.findUnique({
     where: { id: downloadVerificationId, expiresAt: { gt: new Date() } },
     select: { product: { select: { filePath: true, name: true } } },
