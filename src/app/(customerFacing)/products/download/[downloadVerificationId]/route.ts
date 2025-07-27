@@ -1,37 +1,31 @@
-import db from "@/src/db/db";
 import { NextRequest, NextResponse } from "next/server";
+import db from "@/src/db/db";
 import fs from "fs/promises";
 
 export async function GET(
   req: NextRequest,
-  {
-    params,
-  }: {
-    params: {
-      downloadVerificationId: string;
-    };
-  }
+  context: { params: { downloadVerificationId: string } }
 ) {
-  const { downloadVerificationId } = await params;
+  const { downloadVerificationId } = context.params;
 
   const data = await db.downloadVerification.findUnique({
     where: { id: downloadVerificationId, expiresAt: { gt: new Date() } },
     select: { product: { select: { filePath: true, name: true } } },
   });
 
-  if (data == null) {
+  if (data == null || !data.product) {
     return NextResponse.redirect(
       new URL("/products/download/expired", req.url)
     );
   }
   const { size } = await fs.stat(data.product.filePath);
-  const file = await fs.readFile(data.product.filePath);
+  const fileBuffer = await fs.readFile(data.product.filePath);
   const extension = data.product.filePath.split(".").pop();
 
-  return new NextResponse(file, {
+  return new NextResponse(fileBuffer, {
     headers: {
       "Content-Disposition": `attachment; filename="${data.product.name}.${extension}"`,
-      "Content-length": size.toString(),
+      "Content-Length": size.toString(),
     },
   });
 }
