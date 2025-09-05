@@ -14,7 +14,7 @@ export default async function PurchaseCartPage({
 }: {
   searchParams: Record<string, string | string[]>;
 }) {
-  const { cart } = await searchParams;
+  const { cart } = searchParams;
 
   if (!cart) return notFound();
 
