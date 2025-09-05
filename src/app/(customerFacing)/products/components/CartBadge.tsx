@@ -21,7 +21,7 @@ export const CartBadge = () => {
       <ShoppingBag className="w-6 h-6" />
       {/* Рендер бейдж тільки після монтування, щоб уникнути розбіжності */}
       {mounted && totalQty > 0 && (
-        <div className="absolute -bottom-1 -right-2 w-4 h-4 bg-black text-white text-[10px] rounded-full flex items-center justify-center">
+        <div className="absolute -bottom-1 -right-2 w-4 h-4 bg-black text-white text-[10px] rounded-full flex items-center justify-center ">
           {totalQty}
         </div>
       )}
