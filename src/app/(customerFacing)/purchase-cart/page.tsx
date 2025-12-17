@@ -1,7 +1,8 @@
 import Stripe from "stripe";
 import db from "@/src/db/db";
-import { notFound } from "next/navigation";
-import { CheckoutCartForm } from "./_components/CheckoutCartForm";
+import {notFound} from "next/navigation";
+import {CheckoutCartForm} from "./_components/CheckoutCartForm";
+import { PageProps } from "@/.next/types/app/layout";
 
 export const dynamicParams = true;
 
@@ -9,12 +10,8 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
   apiVersion: "2025-03-31.basil",
 });
 
-export default async function PurchaseCartPage({
-  searchParams,
-}: {
-  searchParams: any;
-}) {
-  const { cart } = searchParams;
+export default async function PurchaseCartPage({searchParams}: PageProps) {
+  const {cart} = searchParams;
 
   if (!cart) return notFound();
 
@@ -32,7 +29,7 @@ export default async function PurchaseCartPage({
 
   const productIds = cartItems.map((item) => item.id);
   const products = await db.product.findMany({
-    where: { id: { in: productIds } },
+    where: {id: {in: productIds}},
   });
 
   const totalAmount = cartItems.reduce((acc, item) => {

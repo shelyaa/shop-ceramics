@@ -1,7 +1,8 @@
 "use client";
-import { useProductModal } from "../app/(customerFacing)/context/ProductModalContext";
-import { formatCurrency } from "../lib/formatters";
-import { Button } from "./ui/button";
+import { useRouter } from "next/navigation";
+import {useProductModal} from "../app/(customerFacing)/context/ProductModalContext";
+import {formatCurrency} from "../lib/formatters";
+import {Button} from "./ui/button";
 import {
   Card,
   CardContent,
@@ -27,14 +28,14 @@ export function ProductCard({
   description,
   imagePath,
 }: ProductCardProps) {
-  const { openModal } = useProductModal();
+  // const { openModal } = useProductModal();
+
+  const router = useRouter();
 
   return (
     <Card
       className="flex overflow-hidden flex-col"
-      onClick={() =>
-        openModal({ name, priceInCents, description, imagePath, id })
-      }
+      onClick={() => router.push(`/products/${id}`)}
     >
       <div className="relative w-full aspect-[3/4] max-h-100">
         <Image src={imagePath} fill alt={name} className="object-cover" />
